@@ -5,6 +5,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "storage")
 @Data
-public class VideoStorageProperties {
-    private String videoLocation; // location in resources directory
+public class StorageProperties {
+
+    private String avatarLocation;
+    private String videoLocation;
+    private String photoUrlLocation;
+    private String videoUrlLocation;
 }

@@ -2,11 +2,13 @@ package com.martin.tube.controller;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.martin.tube.common.Action;
+import com.martin.tube.exception.BadRequestException;
 import com.martin.tube.exception.ResourceNotFoundException;
 import com.martin.tube.exception.UnauthorizedException;
 import com.martin.tube.model.Tag;
 import com.martin.tube.model.User;
 import com.martin.tube.model.Video;
+import com.martin.tube.payload.VideoPayload;
 import com.martin.tube.repository.UserRepository;
 import com.martin.tube.security.CurrentUser;
 import com.martin.tube.security.UserPrincipal;
@@ -19,6 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
@@ -41,9 +44,15 @@ public class VideoController {
     }
 
     @GetMapping("/{slug}")
-    public ResponseEntity<?> getVideo(@PathVariable String slug){
+    public ResponseEntity<?> getVideo(@PathVariable String slug, @CurrentUser UserPrincipal userPrincipal){
         Video video = videoService.findVideoBySlug(slug).orElseThrow(ResourceNotFoundException::new);
-        return ResponseEntity.ok(video);
+        User user = userRepository.findById(userPrincipal.getId()).orElseThrow(ResourceNotFoundException::new);
+
+        videoService.incrementViewCountIfNeeded(video, user);
+
+        VideoPayload payload = new VideoPayload(video, user);
+
+        return ResponseEntity.ok(payload);
     }
 
     @GetMapping("/recs")
@@ -71,6 +80,17 @@ public class VideoController {
                 .saveVideo(videoFile, title, description, user);
 
         return ResponseEntity.ok(video);
+    }
+
+    @DeleteMapping("/{slug}")
+    public ResponseEntity<?> deleteVideo(@PathVariable String slug,
+                                         @CurrentUser UserPrincipal userPrincipal){
+        Video video = findVideoAndAuthorize(slug, userPrincipal);
+
+        if (videoService.removeVideo(video))
+            return ResponseEntity.noContent().build();
+
+        throw new BadRequestException("unable to delete video with slug " + slug);
     }
 
     @GetMapping("/{slug}/tags")

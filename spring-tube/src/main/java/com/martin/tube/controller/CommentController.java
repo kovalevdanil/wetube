@@ -76,7 +76,7 @@ public class CommentController {
 
         Comment comment = commentService.saveComment(commentUpload.getContent(), video, user);
 
-        return ResponseEntity.ok(comment);
+        return ResponseEntity.ok(new CommentTree(comment, 1));
     }
 
     @PostMapping("/{id}/reply")

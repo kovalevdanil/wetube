@@ -31,13 +31,14 @@ public class Video {
     @Column(unique = true)
     private String uri;
 
+    private String url;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
     @Column(name = "upload_date")
     private Date uploadDate;
 
     private Long duration; // duration in seconds
 
-    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User uploadedBy;
@@ -58,7 +59,7 @@ public class Video {
     )
     private Set<User> userDisliked = new HashSet<>();
 
-    @OneToMany(mappedBy = "video")
+    @OneToMany(mappedBy = "video", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Comment> comments = new ArrayList<>();
 

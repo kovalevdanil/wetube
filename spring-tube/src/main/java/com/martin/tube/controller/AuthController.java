@@ -52,7 +52,7 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> registerUse(@Valid @RequestBody SignupRequest signupRequest){
+    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signupRequest){
         if (userRepository.existsByEmail(signupRequest.getEmail())){
             throw new BadRequestException("User with email " + signupRequest.getEmail() + " already exists");
         }

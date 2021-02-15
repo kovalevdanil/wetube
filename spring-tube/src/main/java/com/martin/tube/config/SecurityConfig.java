@@ -1,5 +1,6 @@
 package com.martin.tube.config;
 
+
 import com.martin.tube.security.CustomUserDetailsService;
 import com.martin.tube.security.RestAuthenticationEntryPoint;
 import com.martin.tube.security.TokenAuthenticationFilter;
@@ -109,6 +110,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                             "/**/*.js")
                         .permitAll()
                     .antMatchers("/auth/**", "/oauth2/**")
+                        .permitAll()
+                    .antMatchers("/video/**")
                         .permitAll()
                     .anyRequest()
                         .authenticated()

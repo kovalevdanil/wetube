@@ -4,6 +4,7 @@ import com.github.slugify.Slugify;
 import com.martin.tube.exception.BadRequestException;
 import com.martin.tube.model.*;
 import com.martin.tube.model.id.ViewId;
+import com.martin.tube.repository.CommentRepository;
 import com.martin.tube.repository.TagStatsRepository;
 import com.martin.tube.repository.VideoRepository;
 import com.martin.tube.repository.ViewRepository;
@@ -18,9 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.*;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 public class VideoService {
@@ -38,13 +37,15 @@ public class VideoService {
     private final VideoRepository videoRepository;
     private final TagStatsRepository tagStatsRepository;
     private final VideoStorageService videoStorageService;
+    private final CommentRepository commentRepository;
 
 
-    public VideoService(ViewRepository viewRepository, VideoRepository videoRepository, TagStatsRepository tagStatsRepository, VideoStorageService videoStorageService) {
+    public VideoService(ViewRepository viewRepository, VideoRepository videoRepository, TagStatsRepository tagStatsRepository, VideoStorageService videoStorageService, CommentRepository commentRepository) {
         this.viewRepository = viewRepository;
         this.videoRepository = videoRepository;
         this.tagStatsRepository = tagStatsRepository;
         this.videoStorageService = videoStorageService;
+        this.commentRepository = commentRepository;
     }
 
     public Optional<Video> findVideoBySlug(String slug){
@@ -70,6 +71,7 @@ public class VideoService {
         // find unique slug for the video title
         String slug = new Slugify().slugify(title),
                 testSlug = slug;
+
         int slugCount = 0;
         while (videoRepository.existsVideoBySlug(testSlug)){
             testSlug = slug + slugCount;
@@ -84,6 +86,21 @@ public class VideoService {
         video = videoRepository.save(video);
 
         return video;
+    }
+
+    public boolean removeVideo(Video video){
+
+        String fileName = video.getUri();
+
+        try {
+            videoStorageService.delete(fileName);
+            commentRepository.deleteAll(video.getComments());
+            videoRepository.delete(video);
+        } catch (IOException e) {
+            return false;
+        }
+
+        return true;
     }
 
     public boolean incrementViewCountIfNeeded(@NotNull Video video, User user){
@@ -154,6 +171,11 @@ public class VideoService {
                 rangeList.stream().findFirst().orElse(null));
     }
 
+    public ResourceRegion getVideoRegion(String fileName, List<HttpRange> rangeList) throws IOException {
+        return videoStorageService.resourceRegion(fileName,
+                rangeList.stream().findFirst().orElse(null));
+    }
+
     public Set<Tag> addTags(Video video, Collection<Tag> tags){
          if (video.getTags().addAll(tags))
              videoRepository.save(video);
@@ -216,6 +238,7 @@ public class VideoService {
         video.setUploadedBy(user);
         video.setSlug(slug);
         video.setUri(fileName);
+        video.setUrl(videoStorageService.getUrl(fileName));
     }
 
     private boolean isSupportedContentType(String contentType){
