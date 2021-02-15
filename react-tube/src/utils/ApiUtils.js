@@ -96,7 +96,8 @@ export const router = {
     },
     comment:{
         ofVideoBySlug: (slug, params = {}) => addParams(`${API_BASE_URL}/comments?`, {slug: slug, ...params}),
-        postBySlug: (slug) => addParams(`${API_BASE_URL}/comments?`, {slug: slug})
+        postBySlug: (slug) => addParams(`${API_BASE_URL}/comments?`, {slug: slug}),
+        reply: (id) => `${API_BASE_URL}/comments/${id}/reply`
     },
     user : {
         subscribe: (id) => `${API_BASE_URL}/users/${id}/subscribe`,

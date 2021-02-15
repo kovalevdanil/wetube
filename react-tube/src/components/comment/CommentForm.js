@@ -3,7 +3,11 @@ import {Button,Container, Form, Image, Col, Row} from "react-bootstrap";
 
 import './CommentForm.css'
 
-const CommentFormComponent = ({leaveComment, currentUser, authenticated}) => {
+const emptyState = {
+    content: ''
+}
+
+const CommentFormComponent = ({leaveComment, currentUser, authenticated, cancelText = 'Cancel', commentText = 'Comment', onCancel}) => {
     const [state, setState] = useState({
         content: ''
     })
@@ -30,6 +34,15 @@ const CommentFormComponent = ({leaveComment, currentUser, authenticated}) => {
         setState({content: ''})
     }
 
+    const handleCancel = (e) => {
+        e.preventDefault()
+        if (onCancel){
+            onCancel()
+        } else {
+            setState({...emptyState})
+        }
+    }
+
     return (
         <Container>
             <Row className = 'comment-form'>
@@ -49,7 +62,10 @@ const CommentFormComponent = ({leaveComment, currentUser, authenticated}) => {
                             />
                         </Form.Group>
                         <Button variant='primary' className = 'align-self-end' type = 'submit'>
-                            Comment
+                            {commentText}
+                        </Button>
+                        <Button variant = 'outline-secondary' className = 'comment-form-cancel-btn' onClick = {onCancel}>
+                            {cancelText}
                         </Button>
                     </Form>
                 </Col>

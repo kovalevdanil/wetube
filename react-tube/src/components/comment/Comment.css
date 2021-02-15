@@ -17,3 +17,17 @@
     font-weight: 700;
     font-size: 14px;
 }
+
+.comment-more-btn, .comment-form-reply-btn {
+    font-weight: 550;
+    cursor: pointer;
+}
+.comment-more-btn {
+    color: #0f96f6;
+}
+
+.comment-form-reply-btn {
+    color: grey;
+}
+
+

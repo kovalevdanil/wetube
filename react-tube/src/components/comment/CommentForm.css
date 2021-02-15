@@ -5,3 +5,7 @@
 .comment-form-user-avatar {
     max-width: 40px;
 }
+
+.comment-form-cancel-btn {
+    margin-left: 1rem;
+}

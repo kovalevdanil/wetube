@@ -49,10 +49,8 @@ const VideoComponent = ({authenticated, currentUser, channel, video, onLikeClick
                     <Button variant= {channel.subscribed ?'danger' :'outline-danger'} onClick = {() => onSubscribeClick(channel.id, channel.subscribed)}>{channel.subscribed ? 'Subscribed' : 'Subscribe'}</Button>
                 </Col>
             </Row>
-            <Row>
-                <Col>
-                    <p>{video.description}</p>
-                </Col>
+            <Row className = 'video-description'>
+                <p>{video.description}</p>
             </Row>
             <Row md = 'auto'>
                 <div className = 'splitter'/>

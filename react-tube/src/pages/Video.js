@@ -95,7 +95,17 @@ const Video = (props) => {
 
     }
 
-    const handleComment = (payload) => {
+    const handleComment = (payload, replyTo = null) => {
+
+        if (replyTo){
+            post_request(router.comment.reply(replyTo.id), payload)
+                .then(comment => {
+
+                })
+
+            return
+        }
+
         post_request(router.comment.postBySlug(props.match.params.slug), payload)
             .then(comment => {
                 debugger
