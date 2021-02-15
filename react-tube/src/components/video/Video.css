@@ -1,0 +1,42 @@
+.video-upload-date {
+    margin-left: 2rem;
+    font-size: 14px;
+    color: gray;
+}
+
+.video-rate {
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.video-rate.dislike {
+    margin-left: 2rem;
+}
+
+.video-rate-set{
+    color: #0f96f6;
+}
+
+.video-player {
+    width: 100%;
+}
+
+.video-channel-avatar {
+    max-width: 60px
+}
+
+.splitter {
+    width: 100%;
+    height: 1px;
+    background: rgb(207, 211, 213);
+    margin: 10px 0 10px 0;
+}
+
+.video-channel-username{
+    font-weight: 700;
+}
+
+.video-channel-subs-count {
+    font-size: 14px;
+    font-weight: 700;
+}

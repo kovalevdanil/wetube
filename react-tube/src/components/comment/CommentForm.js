@@ -1,0 +1,61 @@
+import React, {useState} from 'react'
+import {Button,Container, Form, Image, Col, Row} from "react-bootstrap";
+
+import './CommentForm.css'
+
+const CommentFormComponent = ({leaveComment, currentUser, authenticated}) => {
+    const [state, setState] = useState({
+        content: ''
+    })
+
+    const handleInput = (e) => {
+        e.preventDefault()
+
+        const {name, value} = e.target
+
+        setState(prev => ({
+            ...prev,
+            [name] : value
+        }))
+    }
+
+    const handleSubmit = (e) => {
+        e.preventDefault()
+
+        const payload = {
+            content: state.content
+        }
+
+        leaveComment(payload)
+        setState({content: ''})
+    }
+
+    return (
+        <Container>
+            <Row className = 'comment-form'>
+                <Col md = 'auto'>
+                    <Image className = 'comment-form-user-avatar' src = {currentUser.imageUrl} roundedCircle/>
+                </Col>
+                <Col>
+                    <Form onSubmit={handleSubmit}>
+                        <Form.Group controlId='content'>
+                            <Form.Control
+                                type = 'text'
+                                onChange={handleInput}
+                                name = 'content'
+                                placeholder = 'Leave a comment...'
+                                required
+                                autoComplete = 'off'
+                            />
+                        </Form.Group>
+                        <Button variant='primary' className = 'align-self-end' type = 'submit'>
+                            Comment
+                        </Button>
+                    </Form>
+                </Col>
+            </Row>
+        </Container>
+    )
+}
+
+export default CommentFormComponent

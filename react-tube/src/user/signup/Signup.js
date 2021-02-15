@@ -1,75 +1,115 @@
 import React, {useState} from 'react'
 import {Redirect, Link} from 'react-router-dom'
-import {GOOGLE_AUTH_URL, GITHUB_AUTH_URL} from '../../constants/holder'
-import googleLogo from '../../img/google-logo.png'
+import {ACCESS_TOKEN, GOOGLE_AUTH_URL} from '../../constants/holder'
+import {Alert, Button, Form, Container} from 'react-bootstrap'
 import { signup } from '../../utils/ApiUtils'
+import {GoogleLoginButton} from "react-social-login-buttons";
 
 import './Signup.css'
 
 const SocialSignup = (props) => {
     return (
         <div className="social-signup">
-            <a className="btn btn-block social-btn google" href={GOOGLE_AUTH_URL}>
-                <img src={googleLogo} alt="Google" /> Sign up with Google</a>
+            <a href = {GOOGLE_AUTH_URL}>
+                <GoogleLoginButton text = 'Signup with Google' />
+            </a>
         </div>
     )
 }
 
 const SignupForm = (props) => {
-    const [username, setUsername] = useState('')
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
 
-    
-    const handleEmailChange = (e) => {
-        setEmail(e.target.value)
+    const [state, setState] = useState({
+        username: '',
+        email: '',
+        password: ''
+    })
+
+    const [alertState, setAlertState] = useState({
+        show: false,
+        message: ''
+    })
+
+
+    const setShowAlert = (visible) =>
+        setAlertState(prev => {
+            return {
+                ...prev,
+                show: visible
+            }
+        })
+
+    const handleInputChange = (e) => {
+        const {name, value} = e.target
+
+        setState(prev => ({
+            ...prev,
+            [name] : value
+        }))
     }
-
-    const handlePasswordChange = (e) => {
-        setPassword(e.target.value)
-    }
-
-    const handleUsernameChange = (e) => {
-        setUsername(e.target.value)
-    }
-
 
     const handleSubmit = (e) => {
         e.preventDefault()
 
         const signupRequest = {
-            email: email,
-            password: password,
-            username: username
+            email: state.email,
+            password: state.password,
+            username: state.username
         }
 
-        signup(signupRequest).then(Response => {
-            props.history.push("/login")
-        }).catch(error => console.log("Something went wrong"))
+        signup(signupRequest).then(data => {
+            props.history.push('/login')
+        }).catch(error => {
+            setAlertState({
+                show: true,
+                message: error.message
+            })
+        })
     }
 
-
     return (
-        <form onSubmit = {handleSubmit}>
-            <div className = 'form-item'>
-                <input type = 'text' name = 'username' placeholder = 'Username' className = 'form-control'
-                    value = {username} onChange = {handleUsernameChange} required/>
-            </div>
-            <div className = 'form-item'>
-                <input type = 'email' name = 'email' placeholder = 'Email' className = 'form-control'
-                    value = {email} onChange = {handleEmailChange} required/>
-            </div>
-            <div className = 'form-item'>
-                <input type = 'password' name = 'password' placeholder = 'Password' className = 'form-control'
-                    value = {password} onChange = {handlePasswordChange} required/>
-            </div>
+        <Form onSubmit = {handleSubmit}>
+            <Form.Group controlId='username'>
+                <Form.Control
+                    type = 'text'
+                    placeholder = 'Username'
+                    name = 'username'
+                    onChange={handleInputChange}
+                />
+            </Form.Group>
+            <Form.Group controlId='email'>
+                <Form.Control
+                    type = 'email'
+                    placeholder = 'Email'
+                    name = 'email'
+                    onChange={handleInputChange}
+                />
+            </Form.Group>
 
-            <button className = 'btn btn-block btn-primary' type ='submit'>Sign Up</button>
-        </form>
+            <Form.Group controlId='password'>
+                <Form.Control
+                    type = 'password'
+                    placeholder = 'Password'
+                    name = 'password'
+                    onChange = {handleInputChange}
+                />
+            </Form.Group>
+
+            {alertState.show &&
+            <Alert dismissible variant='danger' onClose = {() => setShowAlert(false)}>
+                <Alert.Heading>Error!</Alert.Heading>
+                <p>Message from server: {alertState.message}</p>
+            </Alert>}
+
+            <Button block className = 'btn btn-primary' type = 'submit'>
+                Sign Up
+            </Button>
+        </Form>
     )
 }
 
 export const Signup = (props) => {
+
     const {authenticated} = props
 
     if (authenticated){
@@ -82,17 +122,15 @@ export const Signup = (props) => {
     }
 
     return (
-        <div className = "signup-container">
-            <div className = 'signup-content'>
-                <h1 className = 'signup-title'> Signup to Tube</h1>
+        <Container className='signup-container'>
+            <Container className='signup-content'>
+                <h2 className = 'signup-title'> Signup to Tube</h2>
                 <SocialSignup />
-                <div className="or-separator">
-                    <span className="or-text">OR</span>
-                </div>
+                <hr />
                 <SignupForm {...props}/>
                 <span className = 'login-link'>Already have an account? <Link to = '/login'>Login!</Link></span>
-            </div>
-        </div>
+            </Container>
+        </Container>
     )
 }
 

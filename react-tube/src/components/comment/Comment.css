@@ -1,0 +1,19 @@
+.comment {
+    margin-top: 1rem;
+}
+
+.comment-date{
+    margin-left: 2rem;
+    color: gray;
+    font-size: 13px;
+}
+
+.user-avatar {
+    width: 100%;
+    max-width: 50px;
+}
+
+.comment-username {
+    font-weight: 700;
+    font-size: 14px;
+}

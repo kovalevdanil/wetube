@@ -2,67 +2,109 @@ import React, {useState, useEffect} from 'react'
 import {Link} from 'react-router-dom'
 import {login} from '../../utils/ApiUtils'
 import { Redirect } from 'react-router-dom'
-import { ACCESS_TOKEN , GOOGLE_AUTH_URL, GITHUB_AUTH_URL} from '../../constants/holder'
+import {Alert, Container, Form, Button} from 'react-bootstrap'
+
+import { ACCESS_TOKEN , GOOGLE_AUTH_URL} from '../../constants/holder'
 import googleLogo from '../../img/google-logo.png'
+
+import {GoogleLoginButton} from "react-social-login-buttons";
 
 import './Login.css'
 
 const SocialLogin = (props) => {
     return (
             <div className="social-login">
-                <a className="btn btn-block social-btn google" href={GOOGLE_AUTH_URL}>
-                    <img src={googleLogo} alt="Google" /> Log in with Google</a>
+                <a href = {GOOGLE_AUTH_URL}>
+                    <GoogleLoginButton />
+                </a>
             </div>
     )
 }
 
 const LoginForm = (props) => {
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
 
-    const handleEmailChange = (e) => {
-        setEmail(e.target.value)
-    }
+    const [state, setState] = useState({
+        email: '',
+        password: ''
+    })
 
-    const handlePasswordChange = (e) => {
-        setPassword(e.target.value)
+
+    const [alertState, setAlertState] = useState({
+        show: false,
+        message: ''
+    })
+
+    const setShowAlert = (visible) =>
+        setAlertState(prev => {
+            return {
+                ...prev,
+                show: visible
+            }
+        })
+
+    const handleInputChange = (e) => {
+        const {name, value} = e.target
+
+        setState(prev => ({
+            ...prev,
+            [name] : value
+        }))
     }
 
     const handleSubmit = (e) => {
         e.preventDefault()
 
         const loginRequest = {
-            email : email,
-            password: password
+            email : state.email,
+            password: state.password
         }
 
         login(loginRequest).then(response => {
             localStorage.setItem(ACCESS_TOKEN, response.accessToken)
             props.history.push('/')
-        }).catch(error => 
-            console.log("something went wrong")
-        )
+        }).catch(error => {
+            setAlertState({
+                show: true,
+                message: error.message
+            })
+        })
     }
 
-
     return (
-        <form onSubmit = {handleSubmit}>
-            <div className = 'form-item'>
-                <input type = "email" name = 'email' className = 'form-control' placeholder = 'Email'
-                    value = {email} onChange = {handleEmailChange} required/>
-            </div>
-            <div className = 'form-item'>
-                <input type = 'password' name = 'password' className = 'form-control' placeholder = 'Password'
-                    value = {password} onChange = {handlePasswordChange} required/>
-            </div>
-            <div className = 'form-item'>
-                <button type = 'submit' className = 'btn btn-block btn-primary'>Login</button>
-            </div>
-        </form>
+        <Form className = "login-form" onSubmit = {handleSubmit}>
+            <Form.Group controlId='email'>
+                <Form.Control
+                    type = 'email'
+                    placeholder = 'Email'
+                    name = 'email'
+                    onChange={handleInputChange}
+                    required
+                />
+            </Form.Group>
+
+            <Form.Group controlId='password'>
+                <Form.Control
+                    type = 'password'
+                    placeholder = 'Password'
+                    name = 'password'
+                    onChange = {handleInputChange}
+                    required
+                />
+            </Form.Group>
+            {alertState.show &&
+            <Alert variant = 'danger' dismissible onClose = {() => setShowAlert(false)}>
+                <Alert.Heading>Error</Alert.Heading>
+                <p>Message from the server: {alertState.message}</p>
+            </Alert>}
+            <Button variant = 'primary' type = 'submit' block>
+                Login
+            </Button>
+        </Form>
     )
 }
 
 const Login = (props) => {
+
 
     const {authenticated} = props
 
@@ -87,17 +129,15 @@ const Login = (props) => {
     }
 
     return (
-        <div className = 'login-container'>
-            <div className = 'login-content'>
-                <h1 className = 'login-title'>Login to Tube</h1>
+        <Container className = 'login-container'>
+            <Container className = 'login-content'>
+                <h2 className='login-title'>Login to Tube</h2>
                 <SocialLogin />
-                <div className="or-separator">
-                    <span className="or-text">OR</span>
-                </div>
+                <hr/>
                 <LoginForm {...props}/>
-                <span className="signup-link">New user? <Link to="/signup">Sign up!</Link></span>
-            </div>
-        </div>
+                <span className = 'signup-link'>Don't have an account? <Link to = '/signup'>Sign Up!</Link></span>
+            </Container>
+        </Container>
     )
 }
 

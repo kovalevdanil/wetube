@@ -13,13 +13,21 @@ const request = (options) => {
     options = Object.assign({}, defaults, options);
 
     return fetch(options.url, options)
-    .then(response => 
-        response.json().then(json => {
-            if(!response.ok) {
-                return Promise.reject(json);
-            }
-            return json;
-        })
+    .then(response => {
+
+        if (response.status === 204){
+            return Promise.resolve()
+        }
+
+        return response.json().then(json => {
+
+                if(!response.ok) {
+                    return Promise.reject(json);
+                }
+                return json;
+            })
+    }
+
     );
 }
 
@@ -51,15 +59,47 @@ export function signup(signupRequest) {
     });
 }
 
-export function getVideo(slug){
+export function post_request(url, body){
     return request({
-        url: API_BASE_URL + `/videos?slug=${slug}`,
+        url: url,
+        method: 'POST',
+        body: JSON.stringify(body)
+    })
+}
+
+export function get_request(url){
+    return request({
+        url: url,
         method: 'GET'
     })
 }
 
+
+const addParams = (url, params = {}) => {
+    debugger
+    if (params) {
+        let query = Object.keys(params)
+            .map(param => encodeURIComponent(param) + '=' + encodeURIComponent(params[param]))
+            .join('&');
+        url += query;
+    }
+    return url;
+}
+
 export const router = {
     video: {
-         
+        getBySlug: (slug) => `${API_BASE_URL}/videos/${slug}`,
+        post: () => `${API_BASE_URL}/videos`,
+        recommendations: (params = {}) => addParams(`${API_BASE_URL}/videos/recs?`, params),
+        like: (slug, action) => addParams(`${API_BASE_URL}/videos/${slug}/like?`, {action: action}),
+        dislike: (slug, action) => addParams(`${API_BASE_URL}/videos/${slug}/dislike?`, {action: action})
+    },
+    comment:{
+        ofVideoBySlug: (slug, params = {}) => addParams(`${API_BASE_URL}/comments?`, {slug: slug, ...params}),
+        postBySlug: (slug) => addParams(`${API_BASE_URL}/comments?`, {slug: slug})
+    },
+    user : {
+        subscribe: (id) => `${API_BASE_URL}/users/${id}/subscribe`,
+        unsubscribe: (id) => `${API_BASE_URL}/users/${id}/unsubscribe`
     }
 }

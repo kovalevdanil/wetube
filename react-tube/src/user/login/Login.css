@@ -1,47 +1,73 @@
+/*.login-container {*/
+/*    text-align: center;*/
+/*}*/
+
+/*.login-content{*/
+/*    background: #fff;*/
+/*    box-shadow: 0 1px 11px rgba(0, 0, 0, 0.27);*/
+/*    border-radius: 2px;*/
+/*    width: 500px;*/
+/*    display: inline-block;*/
+/*    margin-top: 30px;*/
+/*    padding: 35px;    */
+/*    vertical-align: middle;*/
+/*}*/
+
+/*.social-btn {*/
+/*    margin-bottom: 1rem;*/
+/*    font-weight: 400;*/
+/*    font-size: 16px;*/
+/*}*/
+
+/*.social-btn img {*/
+/*    height: 32px;*/
+/*    float: left;*/
+/*    margin-top: 10px;*/
+/*}*/
+
+/*.social-btn.google {*/
+/*    margin-top: 7px;*/
+/*}*/
+
+/*.social-btn.github {*/
+/*    height: 24px;*/
+/*}*/
+
+/*.signup-link {*/
+/*    color: rgba(0, 0, 0, 0.65);*/
+/*    font-size: 14px;*/
+/*}*/
+
+/*.login-title {*/
+/*    font-size: 1.5rem;*/
+/*    font-weight: 500;*/
+/*    margin-top: 0;*/
+/*    margin-bottom: 30px;*/
+/*    color: rgba(0, 0, 0, 0.65);*/
+/*}*/
 .login-container {
     text-align: center;
 }
 
+.login-container.container {
+    max-width: 700px;
+}
+
 .login-content{
-    background: #fff;
-    box-shadow: 0 1px 11px rgba(0, 0, 0, 0.27);
+    box-shadow: 0 1px 11px rgba(0,0,0,0.27) ;
     border-radius: 2px;
-    width: 500px;
+    padding: 35px 35px 20px 35px;
     display: inline-block;
     margin-top: 30px;
-    padding: 35px;    
-    vertical-align: middle;
 }
 
-.social-btn {
-    margin-bottom: 1rem;
-    font-weight: 400;
-    font-size: 16px;
-}
-
-.social-btn img {
-    height: 32px;
-    float: left;
-    margin-top: 10px;
-}
-
-.social-btn.google {
-    margin-top: 7px;
-}
-
-.social-btn.github {
-    height: 24px;
+.login-title{
+    margin-bottom: 15px;
+    font-weight: 700;
 }
 
 .signup-link {
+    margin: 10px;
     color: rgba(0, 0, 0, 0.65);
     font-size: 14px;
-}
-
-.login-title {
-    font-size: 1.5rem;
-    font-weight: 500;
-    margin-top: 0;
-    margin-bottom: 30px;
-    color: rgba(0, 0, 0, 0.65);
 }

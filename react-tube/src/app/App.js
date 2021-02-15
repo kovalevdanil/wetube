@@ -9,6 +9,7 @@ import { getCurrentUser } from '../utils/ApiUtils';
 import {AppHeader} from '../common/AppHeader'
 import {Signup} from '../user/signup/Signup'
 import {NotFound} from '../common/NotFound'
+import Video from '../pages/Video'
 
 import Alert from 'react-s-alert'
 import OAuth2RedirectHandler from '../user/oauth2/OAuth2RedirectHandler'
@@ -18,7 +19,7 @@ import './App.css';
 const App = (props) => {
   const [authenticated, setAuthenticated] = useState(false)
   const [currentUser, setCurrentUser] = useState(null)
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
       setLoading(true)
@@ -27,9 +28,6 @@ const App = (props) => {
         setCurrentUser(data)
         setAuthenticated(true)
         setLoading(false)
-
-        debugger
-
       }).catch(error => {
         setLoading(false)
       })
@@ -42,9 +40,7 @@ const App = (props) => {
   }
 
   if (loading)
-    // return <LoadingIndicator />
-    return <div>Loadin...</div>
-
+    return <div>Loading...</div>
 
   return (
     <div className = "app">
@@ -54,12 +50,20 @@ const App = (props) => {
 
       <div className = "app-body">
         <Switch>
-          <Route path = "/" exact component = {Home}></Route>
+          <PrivateRoute path = "/" exact
+            authenticated={authenticated}
+            currentUser={currentUser}
+            component = {Home}/>
 
-          <PrivateRoute path = "/profile" 
-            authenticated = {authenticated} 
-            currentUser = {currentUser} 
-            component = {Profile}></PrivateRoute>
+          <PrivateRoute path = "/profile"
+            authenticated = {authenticated}
+            currentUser = {currentUser}
+            component = {Profile}/>
+
+          <PrivateRoute path = '/video/:slug'
+            authenticated={authenticated}
+            currentUser = {currentUser}
+            component={Video}/>
 
           <Route path = "/login" 
              render = {props => 
@@ -67,14 +71,17 @@ const App = (props) => {
              }>
           </Route>
 
-          <Route path = "/signup" 
-             render = {props => <Signup authenticated = {authenticated} {...props}/>}></Route>
+          <Route path = "/signup"
+                 render = {props =>
+                     <Signup authenticated={authenticated} {...props}/>
+                 }/>
 
           <Route path = "/oauth2/redirect"  component = {OAuth2RedirectHandler}/>
 
           <Route component = {NotFound} />
         </Switch>
       </div>
+
       <Alert stack = {{limit: 3}}
         timeout = {3000}
         position = 'top-right' effect = 'slide' offset = {65}/>
