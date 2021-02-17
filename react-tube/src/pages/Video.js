@@ -1,18 +1,26 @@
 import React, {useEffect, useState} from 'react'
-import {Container} from "react-bootstrap";
+import {Container, Col, Row} from "react-bootstrap";
 import {get_request, post_request, router} from "../utils/ApiUtils";
 import VideoComponent from "../components/video/Video";
 import CommentSectionComponent from "../components/comment/CommentSection";
 
 import './Video.css'
+import {Link} from "react-router-dom";
+import {strip} from "../utils/StringUtils";
+
+const COMMENT_PAGE_SIZE = 5
 
 const Video = (props) => {
 
     const {authenticated, currentUser} = props
 
     const [video, setVideo] = useState(null)
+    const [videos, setVideos] = useState([])
     const [comments, setComments] = useState([])
+    const [commentsLoaded, setCommentsLoaded] = useState(false)
     const [loading, setLoading] = useState(false)
+
+    const [commentCurrentPage, setCommentCurrentPage] = useState(0)
 
     useEffect(() => {
         setLoading(true)
@@ -28,13 +36,23 @@ const Video = (props) => {
     }, [])
 
     useEffect(() => {
-       get_request(router.comment.ofVideoBySlug(props.match.params.slug, {depth: -1, size: 100}))
+       get_request(router.comment.ofVideoBySlug(props.match.params.slug, {depth: -1, size: COMMENT_PAGE_SIZE, page: commentCurrentPage}))
            .then(data => {
-               setComments(data.reverse())
+               setComments(data)
+               setCommentCurrentPage(prev => prev + 1)
            })
            .catch(error => {
                console.log(error)
            })
+    }, [])
+
+    useEffect(() => {
+        get_request(router.video.recommendations())
+            .then(vs => {
+                setVideos(vs)
+            }).catch(error => {
+                console.log(error) // TODO handle
+            })
     }, [])
 
     if (loading || video === null){
@@ -117,6 +135,18 @@ const Video = (props) => {
         })
     }
 
+    const handleLoadComments = () => {
+        get_request(router.comment.ofVideoBySlug(props.match.params.slug, {
+            size: COMMENT_PAGE_SIZE,
+            page: commentCurrentPage,
+            depth: -1
+        })).then(data => {
+                setComments(prev => prev.concat(data))
+                setCommentCurrentPage(prev => prev + 1)
+                setCommentsLoaded(data.length < COMMENT_PAGE_SIZE)
+        }).catch(console.log)
+    }
+
     const handleSubscribe = (channelId, wasSubscribed) => {
         if (!channelId){
             console.log('channel id is no defined')
@@ -139,22 +169,53 @@ const Video = (props) => {
     }
 
     return (
-        <Container>
-            <VideoComponent
-                authenticated={authenticated}
-                currentUser={currentUser}
-                video = {video}
-                channel = {video.channel}
-                onLikeClick={handleLike}
-                onDislikeClick={handleDislike}
-                onSubscribeClick={handleSubscribe}
-            />
-            <CommentSectionComponent
-                comments = {comments}
-                currentUser = {currentUser}
-                authenticated = {authenticated}
-                leaveComment = {handleComment}
-            />
+        <Container className='video-page-container' fluid>
+            <Row >
+                <Col sm = {8}>
+                    <VideoComponent
+                        authenticated={authenticated}
+                        currentUser={currentUser}
+                        video = {video}
+                        channel = {video.channel}
+                        onLikeClick={handleLike}
+                        onDislikeClick={handleDislike}
+                        onSubscribeClick={handleSubscribe}
+                    />
+                    <CommentSectionComponent
+                        comments = {comments}
+                        currentUser = {currentUser}
+                        authenticated = {authenticated}
+                        leaveComment = {handleComment}
+                        withLoadMore = {!commentsLoaded}
+                        onLoadMore = {handleLoadComments}
+                        commentsTotalCount = {video.commentCount}
+                    />
+                </Col>
+                <Col sm = {4} className = 'recommendations' >
+                    {videos.map(video => (
+                        <Link to={`/video/${video.slug}`} className = 'align-self-center recommendations-video'>
+                            <Row>
+                                <Col md = 'auto'>
+                                    <video width = '208' height = '103'>
+                                        <source src = {video.url}/>
+                                    </video>
+                                </Col>
+                                <Col className = 'recommendations-video-info'>
+                                    <Row className = 'recommendations-video-title'>
+                                        {strip(video.title, 20)}
+                                    </Row>
+                                    <Row className = 'recommendations-video-description'>
+                                        {strip(video.description, 40)}
+                                    </Row>
+                                    <Row className = 'recommendations-video-date' md = 'auto'>
+                                        {video.views} views • {video.uploadDate}
+                                    </Row>
+                                </Col>
+                            </Row>
+                        </Link>
+                    ))}
+                </Col>
+            </Row>
         </Container>
     )
 }

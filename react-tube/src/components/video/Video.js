@@ -3,12 +3,16 @@ import {Image,Container, Col, Row, Button} from "react-bootstrap";
 
 import './Video.css'
 
-const VideoComponent = ({authenticated, currentUser, channel, video, onLikeClick, onDislikeClick, onSubscribeClick}) => {
+const VideoComponent = ({authenticated, currentUser, channel, video, onLikeClick, onDislikeClick, onSubscribeClick, ...rest}) => {
 
     debugger
 
     const likeClass = video.liked ? 'video-rate-set' : ''
     const dislikeClass = video.disliked ? 'video-rate-set' : ''
+
+    let tags = video.tags.map(t => t.name).join('#').substring(0, 20);
+    if (tags.length > 0)
+        tags = '#' + tags
 
     return (
         <Container>
@@ -16,6 +20,9 @@ const VideoComponent = ({authenticated, currentUser, channel, video, onLikeClick
                 <video className = 'video-player' src = {video.url} controls/>
             </Row>
             <Row>
+                <div className = 'video-tags'>{tags}</div>
+            </Row>
+            <Row className = 'video-title'>
                 <h2>{video.title}</h2>
             </Row>
             <Row>

@@ -76,7 +76,6 @@ export function get_request(url){
 
 
 const addParams = (url, params = {}) => {
-    debugger
     if (params) {
         let query = Object.keys(params)
             .map(param => encodeURIComponent(param) + '=' + encodeURIComponent(params[param]))

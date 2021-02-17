@@ -44,3 +44,12 @@
 .video-description {
     padding: 0.5rem;
 }
+
+.video-tags {
+    color: #0f96f6;
+    font-size: 13px;
+}
+
+.video-title {
+    margin: 0;
+}

@@ -29,7 +29,7 @@ const CommentComponent = (props) => {
                         <p>{comment.content}</p>
                     </Row>
                     <Row>
-                        {showReplyForm ? <CommentFormComponent currentUser = {user} {...props} onCancel = {() => setShowReplyForm(false)}/> :
+                        {showReplyForm ? <CommentFormComponent currentUser = {props.currentUser} {...props} onCancel = {() => setShowReplyForm(false)}/> :
                             <span className = 'comment-form-reply-btn' onClick = {() => {setShowReplyForm(true)}}>Reply</span>}
                     </Row>
                     {expandable &&

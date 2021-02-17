@@ -1,5 +1,5 @@
 import React from "react";
-import {Row, Container} from "react-bootstrap";
+import {Row, Container, Button} from "react-bootstrap";
 import CommentComponent from "./Comment";
 
 import './CommentSection.css'
@@ -7,12 +7,12 @@ import CommentFormComponent from "./CommentForm";
 
 const CommentSectionComponent = (props) => {
 
-    const {comments,currentUser, leaveComment, authenticated} = props
+    const {comments, commentsTotalCount ,currentUser, leaveComment, authenticated, withLoadMore, onLoadMore} = props
 
     return (
         <Container className='comment-section'>
             <Row className = 'comment-section-total-count'>
-                {comments.length} comments
+                {commentsTotalCount} comments
             </Row>
             <Row>
                 <CommentFormComponent
@@ -22,9 +22,14 @@ const CommentSectionComponent = (props) => {
                 />
                 <Container>
                     {comments.map((comment) =>
-                        <CommentComponent comment = {comment} />)}
+                        <CommentComponent comment = {comment} {...props} />)}
                 </Container>
             </Row>
+            {withLoadMore &&
+                <Row className='justify-content-center mb-2'>
+                    <Button onClick = {onLoadMore}>Load More</Button>
+                </Row>
+            }
         </Container>
     )
 

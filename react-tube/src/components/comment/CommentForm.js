@@ -59,12 +59,13 @@ const CommentFormComponent = ({leaveComment, currentUser, authenticated, cancelT
                                 placeholder = 'Leave a comment...'
                                 required
                                 autoComplete = 'off'
+                                value = {state.content}
                             />
                         </Form.Group>
                         <Button variant='primary' className = 'align-self-end' type = 'submit'>
                             {commentText}
                         </Button>
-                        <Button variant = 'outline-secondary' className = 'comment-form-cancel-btn' onClick = {onCancel}>
+                        <Button variant = 'outline-secondary' className = 'comment-form-cancel-btn' onClick = {handleCancel}>
                             {cancelText}
                         </Button>
                     </Form>

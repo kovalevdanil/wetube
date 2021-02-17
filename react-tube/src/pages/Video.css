@@ -1,0 +1,42 @@
+.video-page-container{
+    margin: 0;
+}
+
+.recommendations video {
+    object-fit: fill;
+    padding: 0;
+}
+
+.recommendations a{
+    cursor: pointer;
+}
+.recommendations-video-title{
+    color: #1a1a1a;
+}
+.recommendations-video-description{
+    width: 100%;
+    color: #5f5f5f;
+}
+
+.recommendations-video-info{
+    max-width: 50px;
+}
+
+.recommendations-video-title {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.recommendations-video-date{
+    font-size: 12px;
+    color: #878787;
+
+}
+
+.recommendations-video-description {
+    font-size: 14px;
+}
+
+.recommendations a:hover{
+    text-decoration: none;
+}

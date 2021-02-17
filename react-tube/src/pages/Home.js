@@ -29,14 +29,13 @@ const Home = (props) => {
 
     return (
         <Container className='align-items-center'>
-            <Row>
+            <Row className = 'align-self-center'>
                 {videos.map(video => (
                     <Link to={`/video/${video.slug}`} >
                         <video width = '320' height = '180'>
                             <source src = {video.url}/>
                         </video>
                         <div>{video.title.substring(0, 20)}</div>
-
                     </Link>
                 ))}
             </Row>

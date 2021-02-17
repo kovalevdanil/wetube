@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react'
 import { Route, Switch } from 'react-router-dom';
 import PrivateRoute from '../common/PrivateRoute';
 import { ACCESS_TOKEN } from '../constants/holder';
-import Home from '../home/Home';
+import Home from '../pages/Home';
 import Login from '../user/login/Login';
 import Profile from '../user/profile/Profile';
 import { getCurrentUser } from '../utils/ApiUtils';
