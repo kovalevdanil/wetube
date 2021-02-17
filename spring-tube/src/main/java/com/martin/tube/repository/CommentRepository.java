@@ -13,7 +13,7 @@ public interface CommentRepository extends PagingAndSortingRepository<Comment, L
      @Query(value = "select * from comments where video_id = :videoId and parent_id is null", nativeQuery = true)
      List<Comment> findRootComments(Long videoId);
 
-     @Query(value = "select * from comments where video_id = :videoId and parent_id is null offset :offset limit :limit",
+     @Query(value = "select * from comments where video_id = :videoId and parent_id is null order by date desc offset :offset limit :limit ",
              nativeQuery = true)
      List<Comment> findRootComments(Long videoId, Integer offset, Integer limit);
 }
